@@ -4,20 +4,20 @@ import re
 import urlparse
 import time
 import codecs
-#强大的正则表达式    没有用bs4
+
 
 class target_url_manager (object): 
     def __init__(self):
-        self.target_urls=set()#再理解self.集合=set() 和集合=set() 
+        self.target_urls=set()
         self.old_urls=set() 
     
     def add_new_url(self,i):
         self.target_urls.add('http://guba.eastmoney.com/list,szzs,f_%d.html'%i)
         return
-        #脑洞大开的确定总urls
+       
         
     def add_new_urls(self,n):
-        for i in range(1,n+1):#range使用
+        for i in range(1,n+1):
             self.add_new_url(i)
         return
         
@@ -25,7 +25,7 @@ class target_url_manager (object):
         return len(self.target_urls)!=0
     
     def get_new_url(self):
-        new_url = self.target_urls.pop()#两个队列
+        new_url = self.target_urls.pop()
         self.old_urls.add(new_url)
         return new_url
 
@@ -50,15 +50,13 @@ class htmldownloader(object):
     def download(self,url):
         html_cont1=self.open_url(url)
         com_cont=re.compile(r'stockcodec.+zwconbtns clearfix',re.DOTALL)
-        #针对于python的具体正则表达式'.'的特性  dotall
         print com_cont
         cont=com_cont.search(html_cont1).group()
         return cont
        
     def find_time(self,url):
         html_cont2=self.open_url(url)
-        tar_time=re.search('\d\d\d\d-\d\d-\d\d',html_cont2).group()#re.match.search方法返回的是什么 ,group得到什么 
-                                                                   #正则表达式部分 
+        tar_time=re.search('\d\d\d\d-\d\d-\d\d',html_cont2).group()
         return tar_time 
 
 
@@ -69,9 +67,9 @@ class output_txt(object):
         i=0
         for cont in conts:
             i=i+1
-            name= "cont%d.txt"%i#文件输出部分:优化整合
+            name= "cont%d.txt"%i
             f=codecs.open(name,'w+','utf-8')
-            f.write(cont.decode('utf-8'))#编码这里还不熟 具体了解
+            f.write(cont.decode('utf-8'))
             f.close()
         return 
         
@@ -97,7 +95,7 @@ class spidermain(object):
                    cont=self.downloader.download(url)
                    print  cont
                    conts.add(cont)
-                   true_time=true_time+1#优化方案(判break)
+                   true_time=true_time+1
                    error_time=0
                 else:
                    error_time=error_time+1
@@ -112,6 +110,3 @@ if __name__=='__main__':
     sumpage=1
     obj_spider=spidermain()
     obj_spider.craw(sumpage)
-
-  #优化方案:js数据爬不到 (新了解的)--采取进url找时间内容==系统时间(新学的)
-  # DRY 原则 //////好多重复的感觉
